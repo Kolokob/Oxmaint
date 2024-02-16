@@ -19,6 +19,7 @@ now = datetime.now()
 one_day_earlier = now - timedelta(days=1)
 formatted_date_one_day_earlier = one_day_earlier.strftime("%d-%b-%Y")
 
+
 class CreateSchedule(AdminLoginFixture):
 
     def create_schedule(self):
@@ -27,12 +28,11 @@ class CreateSchedule(AdminLoginFixture):
         self.browser.find_element(By.XPATH, "//span[contains(text(),'Service Schedule')]").click()
         self.browser.find_element(By.XPATH, "//bdi[@id='__button57-BDI-content']").click()
 
-
         # Schedule Title
         WebDriverWait(self.browser, 1500).until(
-            EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).click()
-        WebDriverWait(self.browser, 1500).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).send_keys("Test service schedule")
-
+            EC.presence_of_element_located((By.XPATH, "//input[@id='__input61-inner']"))).click()
+        WebDriverWait(self.browser, 1500).until(
+            EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).send_keys("Test service schedule")
 
         # Asset Number
         WebDriverWait(self.browser, 15).until(
@@ -73,4 +73,3 @@ class CreateSchedule(AdminLoginFixture):
 
         # Set Schedule
         self.browser.find_element(By.XPATH, "//span[@id='__button190-content']").click()
-

@@ -2,22 +2,20 @@ import time
 import unittest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from tests import BASE_URL
 from lib.browser import get_browser
-from tests import DOMAIN, DEFAULT_WAIT, BROWSER
+from tests import DOMAIN, DEFAULT_WAIT, BROWSER, PORTAL_URL
 from selenium.webdriver.support.wait import WebDriverWait
+from fixtures.base_fixture import OxmaintFixture
 
 
-class LogIn(unittest.TestCase):
+class LogIn(OxmaintFixture):
 
-    def __init__(self):
-        super().__init__()
-        self.browser = get_browser(BROWSER)
+    def setUp(self):
+        super().setUp()
         self.wait = WebDriverWait(self.browser, DEFAULT_WAIT)
 
-    def log_in(self, browser, user_name, password, first_name):
-        browser.find_element(By.ID, 'txtUsername').send_keys(user_name)
-        browser.find_element(By.ID, 'txtPassword').send_keys(password)
-        browser.find_element(By.ID, 'btnLogin').click()
-        self.wait.until(EC.url_changes(f'{BASE_URL}/auth/login'))
-        self.assertEqual(browser.find_element(By.XPATH, "//a[@id='welcome']").text, f'Welcome {first_name}')
+    def log_in(self, email, password):
+        self.browser.find_element(By.ID, "email").send_keys(email)
+        self.browser.find_element(By.ID, "password").send_keys(password)
+        self.browser.find_element(By.ID, "Login_with_Email").click()
+
