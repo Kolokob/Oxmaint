@@ -16,23 +16,23 @@ from datetime import datetime, timedelta
 fake = Faker()
 
 now = datetime.now()
-one_day_earlier = now - timedelta(days=1)
+one_day_earlier = now - timedelta(days=2)
 formatted_date_one_day_earlier = one_day_earlier.strftime("%d-%b-%Y")
+
 
 class CreateSchedule(AdminLoginFixture):
 
     def create_schedule(self):
+        # Open "Creation" Schedule
         WebDriverWait(self.browser, 15).until(EC.invisibility_of_element((By.ID, "sap-ui-blocklayer-popup")))
         self.browser.find_element(By.XPATH, "//a[@id='__item425-a']").click()
         self.browser.find_element(By.XPATH, "//span[contains(text(),'Service Schedule')]").click()
         self.browser.find_element(By.XPATH, "//bdi[@id='__button57-BDI-content']").click()
 
-
         # Schedule Title
-        WebDriverWait(self.browser, 1500).until(
-            EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).click()
-        WebDriverWait(self.browser, 1500).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).send_keys("Test service schedule")
-
+        self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[@role='dialog']")))
+        self.wait.until(EC.presence_of_element_located((By.XPATH, "//input[@id='__input61-inner']"))).click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@id='__input61-inner']"))).send_keys("Test service schedule")
 
         # Asset Number
         WebDriverWait(self.browser, 15).until(
@@ -45,13 +45,17 @@ class CreateSchedule(AdminLoginFixture):
             EC.presence_of_element_located((By.XPATH, "//input[@id='__input63-inner']")))
         self.browser.find_element(By.XPATH, "//input[@id='__input63-inner']").send_keys(random.randint(1, 500))
 
+        # Last Service Date
+        self.browser.find_element(By.XPATH, "//input[@id='__picker14-inner']").click()
+        self.browser.find_element(By.XPATH, "//input[@id='__picker14-inner']").send_keys(formatted_date_one_day_earlier)
+
         # Intervals
-        self.browser.find_element(By.XPATH, "//input[@id='__input65-inner']").send_keys(2)
+        self.browser.find_element(By.XPATH, "//input[@id='__input65-inner']").send_keys(10)
 
         # Select "Every" in Intervals
         self.browser.find_element(By.XPATH, "//div[@id='__box82-CbBg']").click()
         self.browser.find_element(By.XPATH, "//input[@id='__input66-inner']").click()
-        self.browser.find_element(By.XPATH, "//input[@id='__input66-inner']").send_keys(1)
+        self.browser.find_element(By.XPATH, "//input[@id='__input66-inner']").send_keys(10)
 
         # Assign to:
         self.browser.find_element(By.XPATH, "//input[@id='__input69-inner']").click()
@@ -67,10 +71,10 @@ class CreateSchedule(AdminLoginFixture):
             "Check temperature")
         self.browser.find_element(By.XPATH, "//bdi[@id='__button193-BDI-content']").click()
 
-        # Last Service Date
-        self.browser.find_element(By.XPATH, "//input[@id='__picker14-inner']").click()
-        self.browser.find_element(By.XPATH, "//input[@id='__picker14-inner']").send_keys(formatted_date_one_day_earlier)
+        # Notify Before
+        self.browser.find_element(By.XPATH, "//div[@id='__container26--Grid-wrapperfor-__layout88']//input").click()
+        self.browser.find_element(By.XPATH, "//div[@id='__container26--Grid-wrapperfor-__layout88']//input").clear()
+        self.browser.find_element(By.XPATH, "//div[@id='__container26--Grid-wrapperfor-__layout88']//input").send_keys(3)
 
         # Set Schedule
         self.browser.find_element(By.XPATH, "//span[@id='__button190-content']").click()
-

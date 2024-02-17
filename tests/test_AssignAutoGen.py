@@ -1,23 +1,16 @@
-import random
 import time
 import unittest
 
 from faker import Faker
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
-
-from fixtures.admin_login_fixture import AdminLoginFixture
 from fixtures.create_schedule_fixture import CreateSchedule
-import faker
 
 fake = Faker()
 
 
-class LoginTests(CreateSchedule):
+class TestAssignAutoGen(CreateSchedule):
 
     def test_create_schedule(self):
         super().create_schedule()
@@ -32,8 +25,9 @@ class LoginTests(CreateSchedule):
         # Create Work Order
         time.sleep(1)
         self.browser.find_element(By.XPATH, "//bdi[@id='__button52-BDI-content']").click()
-        time.sleep(3)
+
         # Check that created work order equals to work order that in work orders list
+        time.sleep(2)
         assert self.browser.find_element(By.XPATH, "(//tbody[@id='__table8-tblBody']//td[3]//bdi)[1]").text == work_order_number
 
 if __name__ == '__main__':
