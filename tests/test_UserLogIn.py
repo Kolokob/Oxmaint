@@ -1,13 +1,17 @@
 import time
 import unittest
 import pytest
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+
 from fixtures.base_fixture import OxmaintFixture
 from tests import BASE_URL
 from fixtures.login import LogIn
 from tests import DOMAIN, DEFAULT_WAIT, BROWSER, PORTAL_URL
+from selenium.webdriver.chrome.options import Options
 
 
 class TestUserLogin(LogIn):
@@ -27,7 +31,6 @@ class TestUserLogin(LogIn):
         assert (self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[@id='__text2']"))).text ==
                 "You are not an authorised user! please check email or password!")
         self.browser.find_element(By.XPATH, "//div[@id='__error0-footer']//button[1]").click()
-
 
 
 if __name__ == '__main__':

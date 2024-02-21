@@ -18,9 +18,11 @@ class TestAssignAutoGen(CreateSchedule):
         time.sleep(1)
 
         # Switch to Work Orders
-        WebDriverWait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, "(//bdi[contains(text(),'Create Workorder')]/ancestor::button)[1]"))).click()
+        WebDriverWait(self.browser, 15).until(EC.presence_of_element_located(
+            (By.XPATH, "(//bdi[contains(text(),'Create Workorder')]/ancestor::button)[1]"))).click()
         time.sleep(1)
-        work_order_number = WebDriverWait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, "//span[@id='wo_number-inner']"))).text
+        work_order_number = WebDriverWait(self.browser, 15).until(
+            EC.presence_of_element_located((By.XPATH, "//span[@id='wo_number-inner']"))).text
 
         # Create Work Order
         time.sleep(1)
@@ -28,7 +30,9 @@ class TestAssignAutoGen(CreateSchedule):
 
         # Check that created work order equals to work order that in work orders list
         time.sleep(2)
-        assert self.browser.find_element(By.XPATH, "(//tbody[@id='__table8-tblBody']//td[3]//bdi)[1]").text == work_order_number
+        assert self.browser.find_element(By.XPATH,
+                                         "(//tbody[@id='__table8-tblBody']//td[3]//bdi)[1]").text == work_order_number
+
 
 if __name__ == '__main__':
     unittest.main()
