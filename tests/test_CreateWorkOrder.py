@@ -5,7 +5,7 @@ from faker import Faker
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from fixtures.create_work_order import CreateWorkOrder
+from fixtures.create_work_order_fixture import CreateWorkOrder
 
 fake = Faker()
 

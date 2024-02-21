@@ -4,7 +4,7 @@ import random
 from random import randint
 from datetime import datetime, timedelta
 from faker import Faker
-from selenium.common import TimeoutException
+from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -69,10 +69,6 @@ full_photo_path = os.path.join(images_file_path, random_photo_file)
 class CreateAssetFixture(AdminLoginFixture):
 
     def create_new_asset(self):
-        # Go to assets
-        WebDriverWait(self.browser, 10).until(
-            EC.invisibility_of_element((By.ID, "sap-ui-blocklayer-popup"))
-        )
         self.random_asset_number = random.randint(1, 4500)
         self.random_asset_name = fake.word()
         self.random_asset_category = random.choice(asset_categories)
@@ -80,8 +76,12 @@ class CreateAssetFixture(AdminLoginFixture):
         self.random_meter_reading = random.randint(1, 500)
         self.random_asset_status = f"//div[@aria-labelledby='__text3']/div//li[{random.randint(1, 7)}]"
 
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//ul[@id='__list37']/li[5]"))).click()
-        self.browser.find_element(By.XPATH, "//ul[@class='sapTntNavLIGroupItems']//a[@id='__item425-a']").click()
+        # Go to assets
+        WebDriverWait(self.browser, 10).until(
+            EC.invisibility_of_element((By.ID, "sap-ui-blocklayer-popup"))
+        )
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//div[@id='__navigation0-Flexible-Content']/ul/li[5]"))).click()
+        self.browser.find_element(By.XPATH, "(//span[contains(text(),'Assets')])[3]").click()
 
         # Go to creation of new asset
         self.wait.until(EC.element_to_be_clickable((By.XPATH, "//bdi[@id='__button0-BDI-content']"))).click()
@@ -108,59 +108,69 @@ class CreateAssetFixture(AdminLoginFixture):
 
         # Asset Status
         try:
-            self.browser.find_element(By.XPATH,
-                                      "(//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[13]//span)[1]").click()
+            time.sleep(1)
+            self.browser.find_element(By.XPATH, "(//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[13]//span)[1]").click()
+            time.sleep(1)
             self.wait.until(EC.element_to_be_clickable((By.XPATH, self.random_asset_status))).click()
-        except TimeoutException:
-            self.browser.find_element(By.XPATH,
-                                      "(//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[13]//span)[1]").click()
+        except ElementClickInterceptedException or TimeoutException:
+            self.browser.find_element(By.XPATH, "(//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[13]//span)[1]").click()
             self.wait.until(EC.element_to_be_clickable((By.XPATH, self.random_asset_status))).click()
-        finally:
-            print("Asset Status could not be set up, please try again")
 
         # Inventory#
-        self.browser.find_element(By.XPATH, "//input[@id='__input63-inner']").click()
-        self.browser.find_element(By.XPATH, "//input[@id='__input63-inner']").send_keys("8462919000/YQ32")
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[15]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[15]//input").send_keys("8462919000/YQ32")
 
         # Asset Utilization Goal
-        self.browser.find_element(By.XPATH, "//div[@id='__container23--Grid-wrapperfor-__input78']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container23--Grid-wrapperfor-__input78']//input").send_keys(
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[17]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[17]//input").send_keys(
             "Maximize machinery uptime "
             "to achieve a 20% increase "
             "in production efficiency by "
             "the end of the year.")
+
         # Site Project
-        self.wait.until(
-            EC.presence_of_element_located((By.XPATH, "(//div[@id='sap-ui-static']//span[@role='button'])[3]"))).click()
-        self.browser.find_element(By.XPATH, f"//div[@id='__box83-popup-list']//ul//li[{random.randint(1, 7)}]").click()
+        try:
+            self.wait.until(
+                EC.presence_of_element_located((By.XPATH, "(//div[@id='sap-ui-static']//span[@role='button'])[3]"))).click()
+            self.browser.find_element(By.XPATH, f"(//div[starts-with(@id, '__box') and contains(@id, '-popup-cont')])[2]//ul//li[{random.randint(1, 7)}]").click()
+
+        except TimeoutException:
+            self.wait.until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "(//div[@id='sap-ui-static']//span[@role='button'])[3]"))).click()
+            self.browser.find_element(By.XPATH,
+                                      f"(//div[starts-with(@id, '__box') and contains(@id, '-popup-cont')])[2]//ul//li[{random.randint(1, 7)}]").click()
+        finally:
+            print("Site Project could not be set up, please try again")
+
 
         # Business Unit
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__input72']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__input72']//input").send_keys(
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[4]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[4]//input").send_keys(
             "Optimize asset use to "
             "enhance productivity and "
             "reduce maintenance costs.")
 
         # Assert Value
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__input74']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__input74']//input").send_keys(
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[6]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[6]//input").send_keys(
             "$50,000")
 
         # Purchase Date
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__picker15']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__picker15']//input").send_keys(
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[8]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[8]//input").send_keys(
             formatted_date)
 
         # Warranty Date
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__picker16']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__picker16']//input").send_keys(
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[10]//input").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[10]//input").send_keys(
             formatted_random_date)
 
         # Required Geo Location while Inspection CheckBox
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__box84']/div/div").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[12]/div/div").click()
 
         # Assign Inspection Form
-        self.browser.find_element(By.XPATH, "//div[@id='__container25--Grid-wrapperfor-__list38']//button/span").click()
+        self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][3]//div[13]//div//button/span").click()
         self.browser.find_element(By.XPATH,
                                   "(//div[starts-with(@id, '__dialog') and substring(@id, string-length(@id) - string-length('-list') + 1) = '-list']//ul//li[1]/div/div)[1]").click()
         self.browser.find_element(By.XPATH,
@@ -284,25 +294,12 @@ class CreateAssetFixture(AdminLoginFixture):
         time.sleep(2)
 
         # Check that just created asset actually created and all the info matches to input info
-        actual_asset_number = self.wait.until(EC.element_to_be_clickable((By.XPATH,
-                                                                          "//tbody[@class='sapMListItems "
-                                                                          "sapMTableTBody']//tr[1]//td["
-                                                                          "@data-sap-ui-column='__column2']//bdi"))).text
-        actual_asset_category = self.browser.find_element(By.XPATH,
-                                                          "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td["
-                                                          "@data-sap-ui-column='__column3']//bdi").text
-        actual_asset_name = self.browser.find_element(By.XPATH,
-                                                      "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td["
-                                                      "@data-sap-ui-column='__column4']//bdi").text
-        actual_asset_model = self.browser.find_element(By.XPATH,
-                                                       "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td["
-                                                       "@data-sap-ui-column='__column6']//bdi").text
-        actual_asset_meter = self.browser.find_element(By.XPATH,
-                                                       "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td["
-                                                       "@data-sap-ui-column='__column7']//bdi").text
-        actual_asset_status = self.browser.find_element(By.XPATH,
-                                                        "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td["
-                                                        "@data-sap-ui-column='__column8']//span/span").text
+        actual_asset_number = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column2']//bdi"))).text
+        actual_asset_category = self.browser.find_element(By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column3']//bdi").text
+        actual_asset_name = self.browser.find_element(By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column4']//bdi").text
+        actual_asset_model = self.browser.find_element(By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column6']//bdi").text
+        actual_asset_meter = self.browser.find_element(By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column7']//bdi").text
+        actual_asset_status = self.browser.find_element(By.XPATH, "//tbody[@class='sapMListItems sapMTableTBody']//tr[1]//td[@data-sap-ui-column='__column8']//span/span").text
 
         assert int(actual_asset_number) == int(self.random_asset_number)
         assert actual_asset_category == self.random_asset_category
