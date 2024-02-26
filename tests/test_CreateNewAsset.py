@@ -1,5 +1,5 @@
 import time
-
+import Faker
 from faker import Faker
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
