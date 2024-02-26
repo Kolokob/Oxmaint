@@ -5,7 +5,7 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
 ConfigArgParse==1.7
-faker==23.2.1
+Faker==23.2.1
 Flask==3.0.2
 Flask-Cors==4.0.0
 Flask-Login==0.6.3
