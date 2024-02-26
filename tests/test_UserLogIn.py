@@ -23,10 +23,27 @@ class TestUserLogin(LogIn):
         password = "123456"
         self.log_in(email, password)
         self.wait.until(EC.url_to_be(PORTAL_URL))
+        time.sleep(1000)
 
     def test_log_in_with_invalid_email_and_password(self):
         email = "example@gmail.com"
         password = "00000"
+        self.log_in(email, password)
+        assert (self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[@id='__text2']"))).text ==
+                "You are not an authorised user! please check email or password!")
+        self.browser.find_element(By.XPATH, "//div[@id='__error0-footer']//button[1]").click()
+
+    def test_log_in_with_invalid_email_and_corret_password(self):
+        email = "______@.cocacola.ccc"
+        password = "123456"
+        self.log_in(email, password)
+        assert (self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[@id='__text2']"))).text ==
+                "You are not an authorised user! please check email or password!")
+        self.browser.find_element(By.XPATH, "//div[@id='__error0-footer']//button[1]").click()
+
+    def test_log_in_with_invalid_password_and_corret_email(self):
+        email = "demo@oxmaint.com"
+        password = "-1-1-1-1-1"
         self.log_in(email, password)
         assert (self.wait.until(EC.presence_of_element_located((By.XPATH, "//span[@id='__text2']"))).text ==
                 "You are not an authorised user! please check email or password!")

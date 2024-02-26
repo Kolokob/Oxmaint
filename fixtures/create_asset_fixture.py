@@ -59,7 +59,8 @@ formatted_date = random_date.strftime('%d-%b-%Y')
 formatted_random_date = random_datee.strftime('%d-%b-%Y')
 formatted_random_date_in_next_three_months = random_date_in_next_three_months.strftime('%d-%b-%Y')
 
-images_file_path = "/Users/kolokob/PycharmProjects/OxmaintTestingFramework/photos"
+# TODO: Change the path to photos
+images_file_path = "/photos"
 files = os.listdir(images_file_path)
 photo_files = [file for file in files if file.endswith('.jpg')]
 random_photo_file = random.choice(photo_files)

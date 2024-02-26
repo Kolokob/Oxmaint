@@ -26,14 +26,14 @@ class CreateSchedule(AdminLoginFixture):
         # Open "Creation" Schedule
         WebDriverWait(self.browser, 15).until(EC.invisibility_of_element((By.ID, "sap-ui-blocklayer-popup")))
         self.browser.find_element(By.XPATH, "//div[@id='__navigation0-Flexible-Content']/ul/li[2]").click()
-        self.browser.find_element(By.XPATH, "//span[contains(text(),'Service Schedule')]").click()
-        self.browser.find_element(By.XPATH, "//bdi[@id='__button57-BDI-content']").click()
+        self.browser.find_element(By.XPATH, "//span[contains(text(),'サービススケジュール')]").click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//bdi[@id='__button57-BDI-content']"))).click()
 
         # Schedule Title
         self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[@role='dialog']")))
         time.sleep(3)
         self.wait.until(EC.element_to_be_clickable((By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[4]"))).click()
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[4]//input"))).send_keys("Test service schedule")
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][1]//div[4]//input"))).send_keys("試験サービススケジュール")
 
         # Asset Number
         WebDriverWait(self.browser, 15).until(
@@ -69,8 +69,8 @@ class CreateSchedule(AdminLoginFixture):
         self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][2]//div[5]//div[last()]/div//button").click()
         WebDriverWait(self.browser, 15).until(
             EC.presence_of_element_located((By.XPATH, "//div[@id='__dialog27-scroll']//div//input"))).send_keys(
-            "Check temperature")
-        self.browser.find_element(By.XPATH, "(//div[starts-with(@id, '__dialog') and contains(@id, '-footer')])[2]//bdi[contains(text(), 'Add')]").click()
+            "温度チェック")
+        self.browser.find_element(By.XPATH, "(//div[starts-with(@id, '__dialog') and contains(@id, '-footer')])[2]//bdi[contains(text(), '追加')]").click()
 
         # Notify Before
         self.browser.find_element(By.XPATH, "//div[starts-with(@id, '__form') and contains(@id, '--Grid-wrapperfor-__container') and contains(@id, '--Grid')][4]//div[3]//input").click()

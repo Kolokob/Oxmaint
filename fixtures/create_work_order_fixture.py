@@ -43,7 +43,8 @@ class CreateWorkOrder(AdminLoginFixture):
 
         # Title
         self.browser.find_element(By.XPATH, "//div[@id='__container1--Grid-wrapperfor-__input22']//input").click()
-        self.browser.find_element(By.XPATH, "//div[@id='__container1--Grid-wrapperfor-__input22']//input").send_keys("Very Meaningful Title")
+        self.title_name = fake.name()
+        self.browser.find_element(By.XPATH, "//div[@id='__container1--Grid-wrapperfor-__input22']//input").send_keys(self.title_name)
 
         # Note Priority
         time.sleep(1)
@@ -84,7 +85,7 @@ class CreateWorkOrder(AdminLoginFixture):
 
         assert self.browser.find_element(By.XPATH, "(//*[starts-with(@id, '__table') and contains(@id, '-tblBody')]//tr[1]//td[3]//bdi)[1]").text == self.work_order_number
 
-        assert self.browser.find_element(By.XPATH, "(//*[starts-with(@id, '__table') and contains(@id, '-tblBody')]//tr[1]//td[3]//bdi)[2]").text == "Very Meaningful Title"
+        assert self.browser.find_element(By.XPATH, "(//*[starts-with(@id, '__table') and contains(@id, '-tblBody')]//tr[1]//td[3]//bdi)[2]").text == self.title_name
 
         assert self.browser.find_element(By.XPATH, "(//*[starts-with(@id, '__table') and contains(@id, '-tblBody')]//tr[1]/td[5]//bdi)[1]").text == self.asset_number
 
